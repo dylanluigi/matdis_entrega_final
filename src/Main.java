@@ -59,72 +59,64 @@ class Entrega {
          * És cert que ∀x ∃!y. P(x) -> Q(x,y) ?
          */
         static boolean exercici1(int[] universe, Predicate<Integer> p, BiPredicate<Integer, Integer> q) {
-            // Itera sobre cada element de 'universe'
             for(int x : universe){
-                // Si el predicat 'p' és cert per a 'x'
                 if(p.test(x)){
-                    // Contarem el nombre de 'y' per al qual 'q(x, y)' és cert. Inicialment, el comptador està a 0.
                     int contadorUnicoY = 0;
-                    // Itera sobre cada element de 'universe' per a possibles 'y'
                     for(int y : universe){
-                        // Si 'q(x, y)' és cert, incrementa el comptador
                         if(q.test(x, y)){
                             contadorUnicoY++;
-                            // Si es troba més d'un 'y' per al qual 'q(x, y)' és cert, retorna false (ja que ha d'existir exactament un 'y')
                             if(contadorUnicoY > 1){
                                 return false;
                             }
                         }
                     }
-                    // Si no es troba cap 'y' per al qual 'q(x, y)' és cert, retorna false (ja que ha d'existir exactament un 'y')
                     if(contadorUnicoY != 1) {
                         return false;
                     }
                 }
             }
-            // Si no es troben excepcions en la comprovació, retorna true.
             return true;
         }
-
 
         /*
          * És cert que ∃!x ∀y. P(y) -> Q(x,y) ?
          */
         static boolean exercici2(int[] universe, Predicate<Integer> p, BiPredicate<Integer, Integer> q) {
-            int contadorUnicoX = 0;
-            int ultimoXTrue = -1;
+            int contUnicaX = 0;
+            boolean pExsiste = false;
 
+            // Miramos cada 'x' en el universo.
             for(int x : universe) {
                 boolean todosValidos = true;
+                // Miramos cada 'y' en el universo
                 for(int y : universe) {
-                    if(p.test(y) && !q.test(x, y)){
-                        todosValidos = false;
-                        break;
+                    if(p.test(y)) {
+                        pExsiste = true;
+                        // Si 'P(y)' es verdad pero 'Q(x, y)' es falsa
+                        if(!q.test(x, y)){
+                            todosValidos = false;
+                            break;
+                        }
                     }
                 }
 
+                // Si todos 'y' son válidos para esta 'x', incrementamos el contador de 'x' válidas
                 if(todosValidos){
-                    contadorUnicoX++;
-                    if(contadorUnicoX > 1){
+                    contUnicaX++;
+                    if(contUnicaX > 1){
                         return false;
                     }
-                    ultimoXTrue = x;
                 }
             }
 
-            if(contadorUnicoX != 1){
+            // Si no existe ninguna 'y' que 'P' sea válido, devolvemos falso.
+            if(!pExsiste){
                 return false;
             }
 
-            // check that there exists some y where P(y) is true
-            for(int y : universe){
-                if(p.test(y)){
-                    return true;
-                }
-            }
-
-            return false;
+            return contUnicaX == 1;
         }
+
 
         /*
          * És cert que ∃x,y ∀z. P(x,z) ⊕ Q(y,z) ?
@@ -154,6 +146,46 @@ class Entrega {
          * És cert que (∀x. P(x)) -> (∀x. Q(x)) ?
          */
         static boolean exercici4(int[] universe, Predicate<Integer> p, Predicate<Integer> q) {
+            boolean allPx = true;
+
+            // Primero verificamos si todos los elementos cumplen con P(x)
+            for(int x : universe) {
+                if(!p.test(x)){
+                    allPx = false;
+                    break;
+                }
+            }
+
+            // Si todos los elementos cumplen con P(x), entonces verificamos si todos cumplen con Q(x)
+            if(allPx){
+                for(int x : universe){
+                    if(!q.test(x)){
+                        // Si encontramos un x que no cumple con Q(x), entonces devolvemos falso
+                        return false;
+                    }
+                }
+            }
+
+            // En caso contrario, si no todos los elementos cumplen con P(x) la declaración es verdadera,
+            // o si todos los elementos cumplen con P(x) y todos los elementos cumplen con Q(x), la declaración también es verdadera.
+            return true;
+        }
+        /*static boolean exercici4(int[] universe, Predicate<Integer> p, Predicate<Integer> q) {
+            for(int x : universe) {
+                if (!p.test(x)) {
+                    // If P(x) is not true for any x, the statement is true
+                    return true;
+                }
+                else if (!q.test(x)) {
+                    // If P(x) is true but Q(x) is not, the statement is false
+                    return false;
+                }
+            }
+
+            // If P(x) and Q(x) are both true for all x, the statement is true
+            return true;
+        }*/
+        /*static boolean exercici4(int[] universe, Predicate<Integer> p, Predicate<Integer> q) {
             boolean todoPSatisfecho = true;
             for(int x : universe) {
                 if(!p.test(x)){
@@ -171,7 +203,7 @@ class Entrega {
             }
 
             return true;
-        }
+        }*/
 
 
         /*
@@ -335,13 +367,13 @@ class Entrega {
 
             List<List<Integer>> claseEquivalencia = new ArrayList<>();
             for (int i : a) {
-                claseEquivalencia.add(new ArrayList<>(Arrays.asList(i)));
+                claseEquivalencia.add(new ArrayList<>(List.of(i)));
             }
 
 
-            for (int[] pair : rel) {
-                int i = buscarEquiva(pair[0], claseEquivalencia);
-                int j = buscarEquiva(pair[1], claseEquivalencia);
+            for (int[] par : rel) {
+                int i = buscarEquiva(par[0], claseEquivalencia);
+                int j = buscarEquiva(par[1], claseEquivalencia);
 
 
                 if (i != j) {
@@ -350,10 +382,16 @@ class Entrega {
                 }
             }
 
-
             return claseEquivalencia.size();
         }
 
+        /**
+         * Este método busca el número entero 'i' en una lista de clases de equivalencia.
+         *
+         * @param i el número entero que estamos buscando.
+         * @param classeEquival la lista de listas que representa las clases de equivalencia.
+         * @return el índice de la clase de equivalencia que contiene 'i', o -1 si 'i' no está en ninguna clase de equivalencia.
+         */
         static int buscarEquiva(int i, List<List<Integer>> classeEquival) {
             for (int j = 0; j < classeEquival.size(); j++) {
                 if (classeEquival.get(j).contains(i)) {
@@ -364,17 +402,25 @@ class Entrega {
         }
 
 
-
         /*
          * Comprovau si la relació `rel` definida entre `a` i `b` és una funció.
          *
          * Podeu soposar que `a` i `b` estan ordenats de menor a major.
          */
+        /*
+         * En matemáticas, una relación entre dos conjuntos a y b se considera una función
+         * si cada elemento de a está relacionado con exactamente un elemento de b.
+         * Dado que se te proporcionan a y b ordenados de menor a mayor, así como
+         * la relación rel como un array bidimensional de pares, puedes comprobar esta propiedad
+         * simplemente verificando que cada elemento de a aparece exactamente una vez en la primera
+         * posición de un par en rel.
+         */
+
         static boolean exercici3(int[] a, int[] b, int[][] rel) {
-            for (int i = 0; i < a.length; i++) {
+            for (int j : a) {
                 int cont = 0;
                 for (int[] par : rel) {
-                    if (par[0] == a[i]) {
+                    if (par[0] == j) {
                         cont++;
                     }
                 }
@@ -385,8 +431,6 @@ class Entrega {
             return true;
         }
 
-
-
         /*
          * Suposau que `f` és una funció amb domini `dom` i codomini `codom`.  Retornau:
          * - Si és exhaustiva, el màxim cardinal de l'antiimatge de cada element de `codom`.
@@ -395,6 +439,67 @@ class Entrega {
          *
          * Podeu suposar que `dom` i `codom` estàn ordenats de menor a major.
          */
+
+        static int exercici4(int[] dom, int[] codom, Function<Integer, Integer> f) {
+            // Contar las imágenes de cada elemento en codom
+            int[] antiImagenContador = new int[codom.length];
+            // Contar la cantidad de veces que aparece cada imagen
+            int[] imgContador = new int[codom.length];
+
+            // Llenar imgContador
+            for (int x : dom) {
+                int img = f.apply(x);
+                for (int j = 0; j < codom.length; j++) {
+                    if (img == codom[j]) {
+                        imgContador[j]++;
+                        break;
+                    }
+                }
+            }
+
+            // Verificar si es exhaustiva y al mismo tiempo calcular antiImagenContador
+            boolean esExhaustiva = true;
+            for (int i = 0; i < codom.length; i++) {
+                antiImagenContador[i] = imgContador[i];
+                if (imgContador[i] == 0) {
+                    esExhaustiva = false;
+                }
+            }
+
+            // Si es exhaustiva, retornar el máximo cardinal de la antiimagen
+            if (esExhaustiva) {
+                int maxAntiImg = 0;
+                for (int contador : antiImagenContador) {
+                    maxAntiImg = Math.max(maxAntiImg, contador);
+                }
+                return maxAntiImg;
+            }
+
+            // Verificar si es inyectiva
+            boolean esInyectiva = true;
+            for (int contador : imgContador) {
+                if (contador > 1) {
+                    esInyectiva = false;
+                    break;
+                }
+            }
+
+            // Si es inyectiva, calcular el cardinal de la imagen
+            if (esInyectiva) {
+                int imgCardinal = 0;
+                for (int contador : imgContador) {
+                    if (contador > 0) {
+                        imgCardinal++;
+                    }
+                }
+                return imgCardinal - codom.length;
+            }
+
+            // En cualquier otro caso, retornar 0
+            return 0;
+        }
+
+        /*
         static int exercici4(int[] dom, int[] codom, Function<Integer, Integer> f) {
             int[] img = new int[dom.length];
 
@@ -454,10 +559,9 @@ class Entrega {
                 return imgCardinal - codom.length;
             }
 
-
             return 0;
         }
-
+        */
 
 
         /*
@@ -590,16 +694,13 @@ class Entrega {
          */
         static int exercici1(int[][] g) {
             int ordre = g.length;
-
             int tam = 0;
-            for (int i = 0; i < ordre; i++) {
-                tam += g[i].length;
+            for (int[] ints : g) {
+                tam += ints.length;
             }
             tam /= 2;
             return ordre - tam;
         }
-
-
 
 
         /*
@@ -612,7 +713,7 @@ class Entrega {
 
             for (int i = 0; i < n; ++i) {
                 if (colors[i] == -1) {
-                    if (!esColorValid(g, colors, i, 0)) {
+                    if (esColorValid(g, colors, i, 0)) {
                         return false;
                     }
                 }
@@ -622,16 +723,16 @@ class Entrega {
 
         static boolean esColorValid(int[][] g, int[] colors, int v, int c) {
             if (colors[v] != -1) {
-                return colors[v] == c;
+                return colors[v] != c;
             }
             colors[v] = c;
 
             for (int veïnat : g[v]) {
-                if (!esColorValid(g, colors, veïnat, 1 - c)) {
-                    return false;
+                if (esColorValid(g, colors, veïnat, 1 - c)) {
+                    return true;
                 }
             }
-            return true;
+            return false;
         }
 
 
