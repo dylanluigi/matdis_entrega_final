@@ -170,40 +170,6 @@ class Entrega {
             // o si todos los elementos cumplen con P(x) y todos los elementos cumplen con Q(x), la declaración también es verdadera.
             return true;
         }
-        /*static boolean exercici4(int[] universe, Predicate<Integer> p, Predicate<Integer> q) {
-            for(int x : universe) {
-                if (!p.test(x)) {
-                    // If P(x) is not true for any x, the statement is true
-                    return true;
-                }
-                else if (!q.test(x)) {
-                    // If P(x) is true but Q(x) is not, the statement is false
-                    return false;
-                }
-            }
-
-            // If P(x) and Q(x) are both true for all x, the statement is true
-            return true;
-        }*/
-        /*static boolean exercici4(int[] universe, Predicate<Integer> p, Predicate<Integer> q) {
-            boolean todoPSatisfecho = true;
-            for(int x : universe) {
-                if(!p.test(x)){
-                    todoPSatisfecho = false;
-                    break;
-                }
-            }
-
-            if(todoPSatisfecho){
-                for(int x : universe){
-                    if(!q.test(x)){
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }*/
 
 
         /*
@@ -311,7 +277,7 @@ class Entrega {
          * Podeu soposar que `a` està ordenat de menor a major.
          */
         static boolean exercici1(int[] a, int[][] rel) {
-            // Reflexivo
+            // Reflexiva
             for (int i : a) {
                 if (!hayRelacion(i, i, rel)) {
                     return false;
@@ -325,7 +291,7 @@ class Entrega {
                 }
             }
 
-            // Transitivo
+            // Transitativa
             for (int i : a) {
                 for (int j : a) {
                     if (hayRelacion(i, j, rel)) {
@@ -408,12 +374,12 @@ class Entrega {
          * Podeu soposar que `a` i `b` estan ordenats de menor a major.
          */
         /*
-         * En matemáticas, una relación entre dos conjuntos a y b se considera una función
+         * "En matemáticas, una relación entre dos conjuntos a y b se considera una función
          * si cada elemento de a está relacionado con exactamente un elemento de b.
          * Dado que se te proporcionan a y b ordenados de menor a mayor, así como
          * la relación rel como un array bidimensional de pares, puedes comprobar esta propiedad
          * simplemente verificando que cada elemento de a aparece exactamente una vez en la primera
-         * posición de un par en rel.
+         * posición de un par en rel. https://es.wikipedia.org/wiki/Relaci%C3%B3n_matem%C3%A1tica
          */
 
         static boolean exercici3(int[] a, int[] b, int[][] rel) {
@@ -442,11 +408,10 @@ class Entrega {
 
         static int exercici4(int[] dom, int[] codom, Function<Integer, Integer> f) {
             // Contar las imágenes de cada elemento en codom
-            int[] antiImagenContador = new int[codom.length];
+            int[] contadorAntiImagen = new int[codom.length];
             // Contar la cantidad de veces que aparece cada imagen
             int[] imgContador = new int[codom.length];
 
-            // Llenar imgContador
             for (int x : dom) {
                 int img = f.apply(x);
                 for (int j = 0; j < codom.length; j++) {
@@ -457,10 +422,10 @@ class Entrega {
                 }
             }
 
-            // Verificar si es exhaustiva y al mismo tiempo calcular antiImagenContador
+            // Exhaustiva y calcular contadorAntiImagen
             boolean esExhaustiva = true;
             for (int i = 0; i < codom.length; i++) {
-                antiImagenContador[i] = imgContador[i];
+                contadorAntiImagen[i] = imgContador[i];
                 if (imgContador[i] == 0) {
                     esExhaustiva = false;
                 }
@@ -469,13 +434,13 @@ class Entrega {
             // Si es exhaustiva, retornar el máximo cardinal de la antiimagen
             if (esExhaustiva) {
                 int maxAntiImg = 0;
-                for (int contador : antiImagenContador) {
+                for (int contador : contadorAntiImagen) {
                     maxAntiImg = Math.max(maxAntiImg, contador);
                 }
                 return maxAntiImg;
             }
 
-            // Verificar si es inyectiva
+            // Inyectiva
             boolean esInyectiva = true;
             for (int contador : imgContador) {
                 if (contador > 1) {
@@ -499,69 +464,6 @@ class Entrega {
             return 0;
         }
 
-        /*
-        static int exercici4(int[] dom, int[] codom, Function<Integer, Integer> f) {
-            int[] img = new int[dom.length];
-
-            for (int i = 0; i < dom.length; i++) {
-                img[i] = f.apply(dom[i]);
-            }
-
-            boolean esExhaustiva = true;
-            int maxAntiImg = 0;
-
-            for (int y : codom) {
-                int contAntiImg = 0;
-                for (int imagen : img) {
-                    if (y == imagen) {
-                        contAntiImg++;
-                    }
-                }
-
-                if (contAntiImg == 0) {
-                    esExhaustiva = false;
-                } else {
-                    maxAntiImg = Math.max(maxAntiImg, contAntiImg);
-                }
-            }
-
-            if (esExhaustiva) {
-                return maxAntiImg;
-            }
-
-
-            boolean esInyectiva = true;
-            for (int i = 0; i < img.length; i++) {
-                for (int j = i + 1; j < img.length; j++) {
-                    if (img[i] == img[j]) {
-                        esInyectiva = false;
-                        break;
-                    }
-                }
-            }
-
-            if (esInyectiva) {
-                int imgCardinal = 0;
-                for (int i : img) {
-                    boolean trobat = false;
-                    for (int y : codom) {
-                        if (i == y) {
-                            trobat = true;
-                            break;
-                        }
-                    }
-
-                    if (trobat) {
-                        imgCardinal++;
-                    }
-                }
-
-                return imgCardinal - codom.length;
-            }
-
-            return 0;
-        }
-        */
 
 
         /*
@@ -748,6 +650,17 @@ class Entrega {
             return dfs(g, visitado, i);
         }
 
+         /**
+         * Realiza una búsqueda en profundidad (DFS) en el grafo dado, empezando desde el vértice v.
+         * Esta función también cuenta los vértices hoja visitados durante la búsqueda.
+         *
+         * @param g La matriz de adyacencia del grafo. g[i][j] debe ser igual a 1 si hay una arista entre i y j, y 0 de lo contrario.
+         * @param visitado Array que indica qué vértices ya han sido visitados. visitado[i] debe ser true si el vértice i ya ha sido visitado, y false de lo contrario.
+         * @param v El vértice desde el que comienza la búsqueda en profundidad.
+         *
+         * @return El número de vértices hoja que han sido visitados durante la búsqueda en profundidad.
+         */
+
         static int dfs(int[][] g, boolean[] visitado, int v) {
             visitado[v] = true;
 
@@ -792,6 +705,17 @@ class Entrega {
             return Arrays.stream(prof).max().getAsInt();
         }
 
+        /**
+         * Realiza una búsqueda en profundidad (DFS) en el grafo dado, comenzando desde el vértice v.
+         * Durante la búsqueda, esta función también actualiza los arrays de profundidad y de la profundidad máxima del hijo para cada vértice.
+         *
+         * @param v El vértice desde donde comienza la búsqueda en profundidad.
+         * @param g La matriz de adyacencia del grafo. g[i][j] debe ser igual a 1 si hay una arista entre i y j, y 0 en caso contrario.
+         * @param prof Un array que guarda la profundidad de cada vértice. prof[i] guarda la profundidad del vértice i.
+         * @param profMaxHijo Un array que guarda la profundidad máxima entre los hijos de cada vértice. profMaxHijo[i] guarda la profundidad máxima de los hijos del vértice i.
+         * @param visitado Un array que indica qué vértices ya han sido visitados. visitado[i] debe ser true si el vértice i ya ha sido visitado, y false de lo contrario.
+         *
+         */
         static void dfs(int v, int[][] g, int[] prof, int[] profMaxHijo, boolean[] visitado) {
             visitado[v] = true;
             int max1 = -1, max2 = -1;
@@ -941,6 +865,15 @@ class Entrega {
          * Si la solució és x ≡ c (mod m), retornau `new int[] { c, m }`, amb 0 ⩽ c < m.
          * Si no en té, retornau null.
          */
+
+        /**
+         * Calcula el máximo común divisor (MCD) de dos números utilizando el algoritmo de Euclides.
+         *
+         * @param a El primer número.
+         * @param b El segundo número.
+         *
+         * @return El máximo común divisor de a y b.
+         */
         static int gcd(int a, int b) {
             if (b == 0) {
                 return a;
@@ -948,6 +881,15 @@ class Entrega {
             return gcd(b, a % b);
         }
 
+        /**
+         * Calcula el máximo común divisor (MCD) de dos números y los coeficientes de la identidad de Bézout utilizando el algoritmo extendido de Euclides.
+         * La identidad de Bézout establece que existen enteros x e y tales que ax + by = gcd(a, b).
+         *
+         * @param a El primer número.
+         * @param b El segundo número.
+         *
+         * @return Un array de tres elementos. El primer elemento es el MCD de a y b. El segundo y tercer elemento son los coeficientes x e y de la identidad de Bézout, respectivamente.
+         */
         static int[] extGCD(int a, int b) {
             if (a == 0) {
                 return new int[]{b, 0, 1};
@@ -1040,7 +982,7 @@ class Entrega {
             int[] newB = new int[longitud];
             int[] newN = new int[longitud];
 
-            // Transform the equation a[i]*x ≡ b[i] (mod n[i]) into x ≡ b'[i] (mod n'[i])
+            // Transforma la ecuacion a[i]*x ≡ b[i] (mod n[i]) a x ≡ b'[i] (mod n'[i])
             for(int i = 0; i < longitud; i++) {
                 if(a[i] < 0) {
                     a[i] += n[i];
@@ -1051,7 +993,7 @@ class Entrega {
 
                 int gcd = gcd(a[i], n[i]);
                 if(gcd != 1) {
-                    // Check if solution exists
+                    // Miramos si la solucion exsiste
                     if(b[i] % gcd != 0) {
                         return null;
                     } else {
@@ -1097,24 +1039,23 @@ class Entrega {
          *
          * No podeu utilitzar `long` per solucionar aquest problema. Necessitareu l'exercici 3a.
          */
-        static ArrayList<Integer> factorizacionPrimero(int n) {
-            ArrayList<Integer> factores = new ArrayList<>();
-            for(int i = 2; i <= n; i++) {
-                while(n % i == 0) {
-                    factores.add(i);
-                    n /= i;
-                }
-            }
-            return factores;
-        }
 
+        /**
+         * Calcula la función phi (indicadora de Euler) de una potencia de un número primo.
+         * La función phi de Euler de una potencia de un número primo p^k se define como φ(p^k) = p^k - p^(k-1).
+         *
+         * @param p El número primo.
+         * @param k El exponente al que se eleva el número primo.
+         *
+         * @return El valor de la función phi de Euler para la potencia del número primo dado.
+         */
         static int phiOfPower(int p, int k) {
             // φ(p^k) = p^k - p^(k-1) per a un primer p
             return (int) (Math.pow(p, k) - Math.pow(p, k-1));
         }
 
         static int exercici3b(int n) {
-            ArrayList<Integer> factoresPrimeros = factorizacionPrimero(n);
+            ArrayList<Integer> factoresPrimeros = exercici3a(n);
             int resultado = 1;
             int contador = 0;
             int previo = -1;
