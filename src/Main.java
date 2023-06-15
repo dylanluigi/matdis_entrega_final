@@ -1,9 +1,12 @@
 import java.lang.AssertionError;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.function.Function;
+import java.util.function.IntPredicate;
 import java.util.function.Predicate;
 
 
@@ -54,7 +57,6 @@ class Entrega {
      * petit com per poder provar tots els casos que faci falta).
      */
     static class Tema1 {
-
         /*
          * És cert que ∀x ∃!y. P(x) -> Q(x,y) ?
          */
@@ -373,6 +375,7 @@ class Entrega {
          *
          * Podeu soposar que `a` i `b` estan ordenats de menor a major.
          */
+
         /*
          * "En matemáticas, una relación entre dos conjuntos a y b se considera una función
          * si cada elemento de a está relacionado con exactamente un elemento de b.
@@ -381,7 +384,6 @@ class Entrega {
          * simplemente verificando que cada elemento de a aparece exactamente una vez en la primera
          * posición de un par en rel. https://es.wikipedia.org/wiki/Relaci%C3%B3n_matem%C3%A1tica
          */
-
         static boolean exercici3(int[] a, int[] b, int[][] rel) {
             for (int j : a) {
                 int cont = 0;
@@ -463,8 +465,6 @@ class Entrega {
             // En cualquier otro caso, retornar 0
             return 0;
         }
-
-
 
         /*
          * Aquí teniu alguns exemples i proves relacionades amb aquests exercicis (vegeu `main`)
@@ -604,7 +604,6 @@ class Entrega {
             return ordre - tam;
         }
 
-
         /*
          * Suposau que el graf (no dirigit) és connex. És bipartit?
          */
@@ -623,6 +622,18 @@ class Entrega {
             return true;
         }
 
+        /**
+         * Comprueba si es válido colorear un vértice específico con un color específico en el grafo proporcionado.
+         * <p>
+         * Source: <a href="https://en.wikipedia.org/wiki/Graph_coloring">Color Graphing</a>
+         * <p>
+         * @param g El grafo que se va a colorear, representado como una matriz de adyacencia.
+         * @param colors Un arreglo que mantiene la asignación actual de colores para los vértices. -1 indica que un vértice aún no está coloreado.
+         * @param v El vértice que se va a colorear o comprobar.
+         * @param c El color con el que se intentará colorear el vértice. Este es un valor entero, por lo general 0 o 1, representando dos colores diferentes.
+         * @return Devuelve 'true' si no se puede colorear el vértice 'v' con el color 'c' (lo que indica que el grafo no es bipartito).
+         *         Devuelve 'false' si se puede colorear el vértice 'v' con el color 'c' (lo que indica que el grafo puede ser bipartito).
+         */
         static boolean esColorValid(int[][] g, int[] colors, int v, int c) {
             if (colors[v] != -1) {
                 return colors[v] != c;
@@ -653,6 +664,8 @@ class Entrega {
          /**
          * Realiza una búsqueda en profundidad (DFS) en el grafo dado, empezando desde el vértice v.
          * Esta función también cuenta los vértices hoja visitados durante la búsqueda.
+         *<p>
+         *Source: <a href="https://www.geeksforgeeks.org/depth-first-search-or-dfs-for-a-graph/">Busqueda en Profundidad</a>
          *
          * @param g La matriz de adyacencia del grafo. g[i][j] debe ser igual a 1 si hay una arista entre i y j, y 0 de lo contrario.
          * @param visitado Array que indica qué vértices ya han sido visitados. visitado[i] debe ser true si el vértice i ya ha sido visitado, y false de lo contrario.
@@ -660,7 +673,6 @@ class Entrega {
          *
          * @return El número de vértices hoja que han sido visitados durante la búsqueda en profundidad.
          */
-
         static int dfs(int[][] g, boolean[] visitado, int v) {
             visitado[v] = true;
 
@@ -687,7 +699,6 @@ class Entrega {
          * Donat un arbre arrelat (dirigit, suposau que l'arrel es el vèrtex 0), trobau-ne el diàmetre
          * del graf subjacent. Suposau que totes les arestes tenen pes 1.
          */
-
         static int exercici4(int[][] g) {
             int n = g.length;
             int[] prof = new int[n];
@@ -708,7 +719,8 @@ class Entrega {
         /**
          * Realiza una búsqueda en profundidad (DFS) en el grafo dado, comenzando desde el vértice v.
          * Durante la búsqueda, esta función también actualiza los arrays de profundidad y de la profundidad máxima del hijo para cada vértice.
-         *
+         *<p>
+         * <a href="https://www.geeksforgeeks.org/depth-first-search-or-dfs-for-a-graph/">Busqueda en Profundidad</a>
          * @param v El vértice desde donde comienza la búsqueda en profundidad.
          * @param g La matriz de adyacencia del grafo. g[i][j] debe ser igual a 1 si hay una arista entre i y j, y 0 en caso contrario.
          * @param prof Un array que guarda la profundidad de cada vértice. prof[i] guarda la profundidad del vértice i.
@@ -866,41 +878,6 @@ class Entrega {
          * Si no en té, retornau null.
          */
 
-        /**
-         * Calcula el máximo común divisor (MCD) de dos números utilizando el algoritmo de Euclides.
-         *
-         * @param a El primer número.
-         * @param b El segundo número.
-         *
-         * @return El máximo común divisor de a y b.
-         */
-        static int gcd(int a, int b) {
-            if (b == 0) {
-                return a;
-            }
-            return gcd(b, a % b);
-        }
-
-        /**
-         * Calcula el máximo común divisor (MCD) de dos números y los coeficientes de la identidad de Bézout utilizando el algoritmo extendido de Euclides.
-         * La identidad de Bézout establece que existen enteros x e y tales que ax + by = gcd(a, b).
-         *
-         * @param a El primer número.
-         * @param b El segundo número.
-         *
-         * @return Un array de tres elementos. El primer elemento es el MCD de a y b. El segundo y tercer elemento son los coeficientes x e y de la identidad de Bézout, respectivamente.
-         */
-        static int[] extGCD(int a, int b) {
-            if (a == 0) {
-                return new int[]{b, 0, 1};
-            } else {
-                int[] resultado = extGCD(b % a, a);
-                int x = resultado[2] - (b / a) * resultado[1];
-                int y = resultado[1];
-                return new int[]{resultado[0], x, y};
-            }
-        }
-
         static int[] exercici1(int a, int b, int n) {
             a = (a % n + n) % n;
             b = (b % n + n) % n;
@@ -919,6 +896,43 @@ class Entrega {
             int result = (x * b) % n;
             return new int[]{result, n};
         }
+
+        /**
+         * Calcula el máximo común divisor (MCD) de dos números utilizando el algoritmo de Euclides.
+         * <a href="https://www.freecodecamp.org/news/euclidian-gcd-algorithm-greatest-common-divisor/">Euclidian Algorithm</a>
+         * @param a El primer número.
+         * @param b El segundo número.
+         *
+         * @return El máximo común divisor de a y b.
+         */
+        static int gcd(int a, int b) {
+            if (b == 0) {
+                return a;
+            }
+            return gcd(b, a % b);
+        }
+
+        /**
+         * Calcula el máximo común divisor (MCD) de dos números y los coeficientes de la identidad de Bézout utilizando el algoritmo extendido de Euclides.
+         * La identidad de Bézout establece que existen enteros x e y tales que ax + by = gcd(a, b).
+         * <a href="https://www.freecodecamp.org/news/euclidian-gcd-algorithm-greatest-common-divisor/">Euclidian Algorithm</a>
+         * @param a El primer número.
+         * @param b El segundo número.
+         *
+         * @return Un array de tres elementos. El primer elemento es el MCD de a y b. El segundo y tercer elemento son los coeficientes x e y de la identidad de Bézout, respectivamente.
+         */
+        static int[] extGCD(int a, int b) {
+            if (a == 0) {
+                return new int[]{b, 0, 1};
+            } else {
+                int[] resultado = extGCD(b % a, a);
+                int x = resultado[2] - (b / a) * resultado[1];
+                int y = resultado[1];
+                return new int[]{resultado[0], x, y};
+            }
+        }
+
+
 
         /*
          * Donau la solució (totes) del sistema d'equacions
@@ -1040,20 +1054,6 @@ class Entrega {
          * No podeu utilitzar `long` per solucionar aquest problema. Necessitareu l'exercici 3a.
          */
 
-        /**
-         * Calcula la función phi (indicadora de Euler) de una potencia de un número primo.
-         * La función phi de Euler de una potencia de un número primo p^k se define como φ(p^k) = p^k - p^(k-1).
-         *
-         * @param p El número primo.
-         * @param k El exponente al que se eleva el número primo.
-         *
-         * @return El valor de la función phi de Euler para la potencia del número primo dado.
-         */
-        static int phiOfPower(int p, int k) {
-            // φ(p^k) = p^k - p^(k-1) per a un primer p
-            return (int) (Math.pow(p, k) - Math.pow(p, k-1));
-        }
-
         static int exercici3b(int n) {
             ArrayList<Integer> factoresPrimeros = exercici3a(n);
             int resultado = 1;
@@ -1077,6 +1077,23 @@ class Entrega {
             }
             return resultado;
         }
+
+
+        /**
+         * Calcula la función phi (indicadora de Euler) de una potencia de un número primo.
+         * La función phi de Euler de una potencia de un número primo p^k se define como φ(p^k) = p^k - p^(k-1).
+         *
+         * @param p El número primo.
+         * @param k El exponente al que se eleva el número primo.
+         *
+         * @return El valor de la función phi de Euler para la potencia del número primo dado.
+         */
+        static int phiOfPower(int p, int k) {
+            // φ(p^k) = p^k - p^(k-1) per a un primer p
+            return (int) (Math.pow(p, k) - Math.pow(p, k-1));
+        }
+
+
 
 
 
