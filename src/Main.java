@@ -629,8 +629,8 @@ class Entrega {
             }
             colors[v] = c;
 
-            for (int veïnat : g[v]) {
-                if (esColorValid(g, colors, veïnat, 1 - c)) {
+            for (int veinat : g[v]) {
+                if (esColorValid(g, colors, veinat, 1 - c)) {
                     return true;
                 }
             }
